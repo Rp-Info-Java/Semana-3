@@ -89,28 +89,60 @@ public class UpdateEnderecos {
 
             System.out.println("---Listagem dos endereços existentes---");
 
-            sb.append(String.format("│ %-5s │ %-20s │ %-25s │ %-8s │ %-8s │ %-10s │ %-3s │ %n",
-                    "ID", "CEP", "RUA", "NÚMERO", "COMPLEMENTO", "BAIRRO", "ID_CIDADE"));
+            // --- Cabeçalho estilizado ---
+            sb.append("┌").append("─".repeat(7)).append("┬") // ID (7)
+                    .append("─".repeat(22)).append("┬") // CEP (22)
+                    .append("─".repeat(27)).append("┬") // RUA (27)
+                    .append("─".repeat(10)).append("┬") // NÚMERO (10)
+                    .append("─".repeat(16)).append("┬") // COMPLEMENTO (16)
+                    .append("─".repeat(20)).append("┬") // BAIRRO (20)
+                    .append("─".repeat(13)).append("┬") // ID_CIDADE (13)
+                    .append("─".repeat(10)).append("┐\n"); // STATUS (10)
+
+            sb.append(String.format("│ %-5s │ %-20s │ %-25s │ %-8s │ %-14s │ %-18s │ %-11s │ %-8s │%n",
+                    "ID", "CEP", "RUA", "NÚMERO", "COMPLEMENTO", "BAIRRO", "ID_CIDADE", "STATUS"));
+
+            sb.append("├").append("─".repeat(7)).append("┼")
+                    .append("─".repeat(22)).append("┼")
+                    .append("─".repeat(27)).append("┼")
+                    .append("─".repeat(10)).append("┼")
+                    .append("─".repeat(16)).append("┼")
+                    .append("─".repeat(20)).append("┼")
+                    .append("─".repeat(13)).append("┼")
+                    .append("─".repeat(10)).append("┤\n");
 
             System.out.print(sb.toString());
 
+            // --- Dados da Tabela ---
             while (rs.next()) {
                 String rua = rs.getString("ende_rua");
                 String bairro = rs.getString("ende_bairro");
+                String complemento = rs.getString("ende_complemento"); // Obtém o complemento
+                String ende_status = rs.getString("ende_status"); // Puxa o status do banco de dados
 
                 // Ajusta tamanho das strings
                 rua = ajustarTamanho(rua, 25);
                 bairro = ajustarTamanho(bairro, 18);
+                complemento = ajustarTamanho(complemento, 14); // Ajusta o complemento
+                ende_status = ajustarTamanho(ende_status, 8); // Ajusta para a largura da coluna STATUS
 
-                System.out.printf("│ %-5d │ %-20s │ %-25s │ %-8d │ %-11s │ %10s │ %9d │ %n",
+                System.out.printf("│ %-5d │ %-20s │ %-25s │ %-8d │ %-14s │ %-18s │ %-11d │ %-8s │%n",
                         rs.getInt("ende_id"),
                         rs.getString("ende_cep"),
                         rua,
                         rs.getInt("ende_numero"),
-                        rs.getString("ende_complemento"),
+                        complemento, // Usa a variável ajustada
                         bairro,
-                        rs.getInt("ende_cida_id"));
+                        rs.getInt("ende_cida_id"),
+                        ende_status); // Imprime o status do endereço
             }
+
+            // --- Rodapé da Tabela ---
+            System.out.println("└" + "─".repeat(7) + "┴" + "─".repeat(22) +
+                    "┴" + "─".repeat(27) + "┴" + "─".repeat(10) +
+                    "┴" + "─".repeat(16) + "┴" + "─".repeat(20) +
+                    "┴" + "─".repeat(13) + "┴" + "─".repeat(10) +
+                    "┘");
 
         } catch (SQLException e) {
             System.out.println("Erro ao executar a consulta: " + e.getMessage());
@@ -173,6 +205,7 @@ public class UpdateEnderecos {
                 palavra = teclado.nextLine();
                 stmt.setString(6, palavra);
 
+                stmt.setString(8, "S");
                 stmt.executeUpdate();
 
                 System.out.println("Endereço adicionado com sucesso!");

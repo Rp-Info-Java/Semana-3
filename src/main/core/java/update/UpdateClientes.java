@@ -55,26 +55,71 @@ public class UpdateClientes {
 
             System.out.println("---Listagem dos clientes cadastrados---");
 
-            sb.append(String.format("│ %-5s │ %-20s │ %-25s │ %-14s │ %-14s │ %-12s │ %-3s │ %n",
-                    "ID", "NOME", "EMAIL", "CPF", "TELEFONE", "DATA CADASTRO", "ID_ENDEREÇO"));
+            // --- Cabeçalho estilizado (usando a mesma lógica de produtos) ---
+            sb.append("┌").append("─".repeat(7)).append("┬").append("─".repeat(22)) // ID (7), NOME (22)
+                    .append("┬").append("─".repeat(27)).append("┬").append("─".repeat(16)) // EMAIL (27), CPF (16)
+                    .append("┬").append("─".repeat(16)).append("┬").append("─".repeat(20)) // TELEFONE (16), DATA CADASTRO (20)
+                    .append("┬").append("─".repeat(14)).append("┬").append("─".repeat(10)) // ID_ENDEREÇO (14), STATUS (10)
+                    .append("┐\n");
+
+            sb.append(String.format("│ %-5s │ %-20s │ %-25s │ %-14s │ %-14s │ %-18s │ %-12s │ %-8s │%n",
+                    "ID", "NOME", "EMAIL", "CPF", "TELEFONE", "DATA CADASTRO", "ID_ENDEREÇO", "STATUS"));
+
+            sb.append("├").append("─".repeat(7)).append("┼").append("─".repeat(22))
+                    .append("┼").append("─".repeat(27)).append("┼").append("─".repeat(16))
+                    .append("┼").append("─".repeat(16)).append("┼").append("─".repeat(20))
+                    .append("┼").append("─".repeat(14)).append("┼").append("─".repeat(10))
+                    .append("┤\n");
 
             System.out.print(sb.toString());
 
+            // --- Dados da Tabela ---
             while (rs.next()) {
+                String clie_nome = rs.getString("clie_nome");
+                String clie_email = rs.getString("clie_email");
+                String clie_cpf = rs.getString("clie_cpf");
+                String clie_telefone = rs.getString("clie_telefone");
+                String clie_status = rs.getString("clie_status"); // Puxa o status do banco de dados
 
-                System.out.printf("│ %-5d │ %-20s │ %-25s │ %-14s │ %-14s │ %-18s │ %-6d │ %n",
+                // Ajusta tamanho das strings
+                clie_nome = ajustarTamanho(clie_nome, 20);
+                clie_email = ajustarTamanho(clie_email, 25);
+                clie_cpf = ajustarTamanho(clie_cpf, 14);
+                clie_telefone = ajustarTamanho(clie_telefone, 14);
+                clie_status = ajustarTamanho(clie_status, 8); // Ajusta para a largura da coluna STATUS
+
+                System.out.printf("│ %-5d │ %-20s │ %-25s │ %-14s │ %-14s │ %-18s │ %-12d │ %-8s │%n",
                         rs.getInt("clie_id"),
-                        rs.getString("clie_nome"),
-                        rs.getString("clie_email"),
-                        rs.getString("clie_cpf"),
-                        rs.getString("clie_telefone"),
+                        clie_nome,
+                        clie_email,
+                        clie_cpf,
+                        clie_telefone,
                         rs.getDate("clie_data_cadastro"),
-                        rs.getInt("clie_ende_id"));
+                        rs.getInt("clie_ende_id"),
+                        clie_status); // Imprime o status do cliente
             }
+
+            // --- Rodapé da Tabela ---
+            System.out.println("└" + "─".repeat(7) + "┴" + "─".repeat(22) +
+                    "┴" + "─".repeat(27) + "┴" + "─".repeat(16) +
+                    "┴" + "─".repeat(16) + "┴" + "─".repeat(20) +
+                    "┴" + "─".repeat(14) + "┴" + "─".repeat(10) +
+                    "┘");
 
         } catch (SQLException e) {
             System.out.println("Erro ao executar a consulta: " + e.getMessage());
+        }
+    }
 
+    // Método auxiliar para ajustar o tamanho das strings e tratar nulos
+    private static String ajustarTamanho(String text, int length) {
+        if (text == null) {
+            return String.format("%-" + length + "s", "");
+        }
+        if (text.length() > length) {
+            return text.substring(0, length);
+        } else {
+            return String.format("%-" + length + "s", text);
         }
     }
 
@@ -151,6 +196,7 @@ public class UpdateClientes {
 
                 System.out.println("Inserindo data atual do cadastro do cliente...");
                 stmt.setObject(6, dataCadastro);
+                stmt.setString(8, "S");
                 stmt.executeUpdate();
 
                 System.out.println("Cliente cadastrado com sucesso!");

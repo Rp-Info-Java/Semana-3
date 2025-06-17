@@ -13,7 +13,6 @@ public class UpdateProdutos {
     //att preço
     Scanner teclado = new Scanner(System.in);
     String palavra = "";
-    ConsultaProdutos consulta = new ConsultaProdutos();
     private final String queryListagem = "SELECT * FROM produtos ORDER BY prod_id";
     int opcao = 0;
 

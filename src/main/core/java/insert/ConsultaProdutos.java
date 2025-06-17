@@ -68,43 +68,50 @@ public class ConsultaProdutos {
             // Cabeçalho estilizado
             sb.append("┌").append("─".repeat(7)).append("┬").append("─".repeat(27))
                     .append("┬").append("─".repeat(14)).append("┬").append("─".repeat(20))
-                    .append("┬").append("─".repeat(10)).append("┐\n");
+                    .append("┬").append("─".repeat(10))
+                    .append("┬").append("─".repeat(12)).append("┐\n"); // Adicionado para a coluna STATUS (12 caracteres)
 
-            sb.append(String.format("│ %-5s │ %-25s │ %-12s │ %-18s │ %-8s │%n",
-                    "ID", "NOME", "PREÇO", "CATEGORIA", "ESTOQUE"));
+            sb.append(String.format("│ %-5s │ %-25s │ %-12s │ %-18s │ %-8s │ %-10s │%n", // Ajustado para STATUS
+                    "ID", "NOME", "PREÇO", "CATEGORIA", "ESTOQUE", "STATUS")); // Adicionado "STATUS"
 
             sb.append("├").append("─".repeat(7)).append("┼").append("─".repeat(27))
                     .append("┼").append("─".repeat(14)).append("┼").append("─".repeat(20))
-                    .append("┼").append("─".repeat(10)).append("┤\n");
+                    .append("┼").append("─".repeat(10))
+                    .append("┼").append("─".repeat(12)).append("┤\n"); // Adicionado para a coluna STATUS
 
             System.out.print(sb.toString());
 
             while (rs.next()) {
                 String nome = rs.getString("prod_nome");
                 String categoria = rs.getString("prod_categoria");
+                String status = rs.getString("prod_status"); // Puxa o status do banco de dados
 
                 // Ajusta tamanho das strings
                 nome = ajustarTamanho(nome, 25);
                 categoria = ajustarTamanho(categoria, 18);
+                status = ajustarTamanho(status, 10); // Ajusta o tamanho da string status para 10 caracteres
 
-                System.out.printf("│ %-5d │ %-25s │ R$ %9.2f │ %-18s │ %8d │%n",
+                System.out.printf("│ %-5d │ %-25s │ R$ %9.2f │ %-18s │ %8d │ %10s │%n", // Adicionado para STATUS
                         rs.getInt("prod_id"),
                         nome,
                         rs.getDouble("prod_preco"),
                         categoria,
-                        rs.getInt("prod_estoque"));
+                        rs.getInt("prod_estoque"),
+                        status); // Imprime o status do banco de dados
             }
 
             // Rodapé da tabela
             System.out.println("└" + "─".repeat(7) + "┴" + "─".repeat(27) +
                     "┴" + "─".repeat(14) + "┴" + "─".repeat(20) +
-                    "┴" + "─".repeat(10) + "┘");
+                    "┴" + "─".repeat(10) +
+                    "┴" + "─".repeat(12) + "┘"); // Adicionado para a coluna STATUS
 
         } catch (SQLException e) {
             System.out.println("Erro ao executar a consulta: " + e.getMessage());
 
         }
     }
+
 
     private static String ajustarTamanho(String str, int tamanho) {
         if (str == null) str = "";

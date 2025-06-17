@@ -27,6 +27,8 @@ public class AddProdutos {
             palavra = teclado.nextLine();
             stmt.setInt(4, Integer.parseInt(palavra));
 
+            stmt.setString(5, "S");
+
             stmt.executeUpdate();
 
             System.out.println("Produto adicionado com sucesso!");

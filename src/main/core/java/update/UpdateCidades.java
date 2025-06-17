@@ -41,21 +41,69 @@ public class UpdateCidades {
         }while(opcao != 0);
     }
 
-    public void listCidades(Connection conn, String sql) throws SQLException {
+    public static void listCidades(Connection conn, String sql) throws SQLException {
 
         try(Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql)){
 
-            System.out.println("--Listagem de Cidades--");
+            StringBuilder sb = new StringBuilder();
+
+            System.out.println("---Listagem de Cidades---");
+
+            // --- Cabeçalho estilizado ---
+            sb.append("┌").append("─".repeat(10)).append("┬") // ID (10)
+                    .append("─".repeat(27)).append("┬") // NOME (27)
+                    .append("─".repeat(6)).append("┬") // UF (6)
+                    .append("─".repeat(10)).append("┐\n"); // STATUS (10)
+
+            sb.append(String.format("│ %-8s │ %-25s │ %-4s │ %-8s │%n",
+                    "ID", "NOME", "UF", "STATUS"));
+
+            sb.append("├").append("─".repeat(10)).append("┼")
+                    .append("─".repeat(27)).append("┼")
+                    .append("─".repeat(6)).append("┼")
+                    .append("─".repeat(10)).append("┤\n");
+
+            System.out.print(sb.toString());
+
+            // --- Dados da Tabela ---
             while(rs.next()){
-                System.out.printf("| %-8s | %-25s | %-4s | %n",
+                String cida_nome = rs.getString("cida_nome");
+                String cida_uf = rs.getString("cida_uf");
+                String cida_status = rs.getString("cida_status"); // Puxa o status do banco de dados
+
+                // Ajusta tamanho das strings
+                cida_nome = ajustarTamanho(cida_nome, 25);
+                cida_uf = ajustarTamanho(cida_uf, 4);
+                cida_status = ajustarTamanho(cida_status, 8); // Ajusta para a largura da coluna STATUS
+
+                System.out.printf("│ %-8d │ %-25s │ %-4s │ %-8s │%n",
                         rs.getInt("cida_id"),
-                        rs.getString("cida_nome"),
-                        rs.getString("cida_uf"));
+                        cida_nome,
+                        cida_uf,
+                        cida_status); // Imprime o status da cidade
             }
+
+            // --- Rodapé da Tabela ---
+            System.out.println("└" + "─".repeat(10) + "┴"
+                    + "─".repeat(27) + "┴"
+                    + "─".repeat(6) + "┴"
+                    + "─".repeat(10) + "┘");
+
         }catch (SQLException e) {
             System.out.println("Erro ao executar a consulta: " + e.getMessage());
+        }
+    }
 
+    // Método auxiliar para ajustar o tamanho das strings e tratar nulos
+    private static String ajustarTamanho(String text, int length) {
+        if (text == null) {
+            return String.format("%-" + length + "s", "");
+        }
+        if (text.length() > length) {
+            return text.substring(0, length);
+        } else {
+            return String.format("%-" + length + "s", text);
         }
     }
 
@@ -87,6 +135,7 @@ public class UpdateCidades {
                 palavra = teclado.nextLine();
 
                 stmt.setString(3, palavra.toUpperCase());
+                stmt.setString(4, "S");
 
                 stmt.executeUpdate();
 
