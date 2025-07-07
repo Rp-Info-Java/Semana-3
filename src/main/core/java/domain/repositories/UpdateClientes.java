@@ -1,7 +1,6 @@
-package update;
+package domain.repositories;
 
-import insert.ConsultaProdutos;
-import utils.FunctionsAux;
+import shared.FunctionsAux;
 
 import java.sql.*;
 import java.time.LocalDateTime;

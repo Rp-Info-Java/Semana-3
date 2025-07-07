@@ -1,6 +1,4 @@
-package delete;
-
-import update.UpdateCidades;
+package domain.repositories;
 
 import java.sql.*;
 import java.util.Scanner;

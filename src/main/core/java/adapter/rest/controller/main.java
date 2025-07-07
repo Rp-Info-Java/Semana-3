@@ -1,13 +1,11 @@
-import delete.DeleteCidades;
-import delete.DeleteClientes;
-import delete.DeleteEnderecos;
-import delete.DeleteProdutos;
-import insert.AddProdutos;
-import insert.ConsultaProdutos;
-import update.UpdateCidades;
-import update.UpdateClientes;
-import update.UpdateEnderecos;
-import update.UpdateProdutos;
+package adapter.rest.controller;
+
+import domain.repositories.DeleteCidades;
+import domain.repositories.DeleteClientes;
+import domain.repositories.DeleteEnderecos;
+import domain.repositories.UpdateCidades;
+import domain.repositories.UpdateClientes;
+import domain.repositories.UpdateEnderecos;
 
 import java.sql.*;
 import java.util.InputMismatchException;
@@ -33,6 +31,7 @@ public class main {
             DeleteClientes delClie = new DeleteClientes();
             DeleteCidades delCida = new DeleteCidades();
             DeleteEnderecos delEnde = new DeleteEnderecos();
+            ProdutosController prodControl = new ProdutosController();
             String sql = "INSERT INTO produtos (prod_nome, prod_preco, prod_categoria, prod_estoque, prod_status) VALUES (?,?,?,?,?)";
             String sql2 = "INSERT INTO cidades (cida_id, cida_nome, cida_uf,cida_status) VALUES (?,?,?,?)";
             String sql3 = "INSERT INTO enderecos (ende_id, ende_cep, ende_rua, ende_numero, ende_complemento, ende_bairro, ende_cida_id, ende_status) VALUES (?,?,?,?,?,?,?,?)";
@@ -60,18 +59,18 @@ public class main {
                             System.out.println("Você digitou uma opção inválida. Por favor, digite uma opção válida (1-6, ou 0 para sair)!\n");
                         }
                         else if(opcao == 1){
-                            consulta.consultar(conn);
+                            //consulta.consultar(conn);
+                            //TESTANDO CONTROLLER PRODUTOS
+                            prodControl.listagemProdutos();
                         }else if (opcao == 2){
-                            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                                addProd.adicionar(stmt);
-                            }
-                            catch (SQLException e) {
-                                System.out.println("Erro ao executar a consulta: " + e.getMessage());
-                            }
+                            prodControl.addProduto();
                         }else if(opcao == 3){
-                            att.atualizacao(conn);
+                            //att.atualizacao(conn);
+                            //TESTANDO CONTROLLER UPDATE PRODUTOS
+                            prodControl.updateProduto();
                         }else if(opcao == 4){
-                            delProd.deletarProds(conn);
+                            //delProd.deletarProds(conn);
+                            prodControl.deleteProduto();
                         }else if(opcao == 5){
                             try (PreparedStatement stmt = conn.prepareStatement(sql3)) {
                                 end.atualizacaoEnde(conn, stmt);
