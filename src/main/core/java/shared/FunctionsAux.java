@@ -35,25 +35,4 @@ public class FunctionsAux {
         }
         return str;
     }
-
-    public static List<Produtos> getResultSet(Connection conn, String query) {
-        List<Produtos> produtos = new ArrayList<>();
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-
-            while (rs.next()) {
-                int idProd = rs.getInt("prod_id");
-                String nomeProd = rs.getString("prod_nome");
-                String statusProd = rs.getString("prod_status");
-
-                Produtos produto = new Produtos(idProd, nomeProd, statusProd);
-                produtos.add(produto);
-            }
-            return produtos;
-
-        } catch (SQLException e) {
-            System.out.println("Erro ao executar a consulta: " + e.getMessage());
-        }
-        return produtos;
-    }
 }

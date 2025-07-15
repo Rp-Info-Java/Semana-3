@@ -4,11 +4,31 @@ import application.usecase.ProdutosUseCase;
 import domain.model.entity.Produtos;
 
 import java.sql.*;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class ProdutosController {
-    Scanner teclado = new Scanner(System.in);
     int opcao = 0;
+
+    private static String lerOpcaoString(){
+        Scanner teclado = new Scanner(System.in);
+        try{
+            return teclado.nextLine();
+        }catch (InputMismatchException e){
+            System.out.println("Erro ao digitar: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static int lerOpcao() {
+        Scanner teclado2 = new Scanner(System.in);
+        try {
+            return teclado2.nextInt();
+        } catch (InputMismatchException e) {
+            System.out.println("Erro ao digitar: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
 
     public void listagemProdutos() {
         do {
@@ -26,7 +46,7 @@ public class ProdutosController {
                     0- Cancelar consulta no banco de dados da loja.
                     """);
             System.out.println("Digite a opção de consulta a ser realizada (1-9 ou 0 para cancelar a consulta): ");
-            opcao = teclado.nextInt();
+            opcao = lerOpcao();
 
             if (opcao == 0) {
                 System.out.println("Cancelando busca.");
@@ -58,13 +78,13 @@ public class ProdutosController {
         Produtos produto = new Produtos();
         System.out.println("\n--Adicionando produto ao banco de dados da loja--");
         System.out.println("Digite o nome do produto: ");
-        produto.setProd_nome(teclado.nextLine());
+        produto.setProd_nome(lerOpcaoString());
         System.out.println("Digite o preço do produto (com PONTO ao invés de vírgula): ");
-        produto.setProd_preco(Double.parseDouble(teclado.nextLine()));
+        produto.setProd_preco(Double.parseDouble(lerOpcaoString()));
         System.out.println("Digite a categoria do produto: ");
-        produto.setProd_categoria(teclado.nextLine());
+        produto.setProd_categoria(lerOpcaoString());
         System.out.println("Digite o estoque do produto: ");
-        produto.setProd_estoque(Integer.parseInt(teclado.nextLine()));
+        produto.setProd_estoque(Integer.parseInt(lerOpcaoString()));
         System.out.println("Ativando status do novo produto...");
         produto.setProd_status("S");
 
@@ -82,56 +102,51 @@ public class ProdutosController {
                     0- Cancelar atualização.
                     """);
             System.out.println("Digite a opção de atualização desejada (1-3 ou 0 para sair): ");
-            opcao = teclado.nextInt();
+            opcao = lerOpcao();
             Produtos produto = new Produtos();
 
             if (opcao == 0) {
-                teclado.nextLine();
                 ProdutosUseCase.attProdutos(produto, opcao); //mensagem para sair do menu
             } else if (opcao < 0 || opcao > 3) {
                 ProdutosUseCase.attProdutos(produto, opcao);
             } else if (opcao == 1) {
                 ProdutosUseCase.listarProdutos();
-                teclado.nextLine();
 
                 System.out.println("-Atualização de categoria por NOME e ID do produto-");
                 System.out.println("Escreva o nome da NOVA categoria para o produto a ser alterado: ");
-                produto.setProd_categoria(teclado.nextLine());
+                produto.setProd_categoria(lerOpcaoString());
 
                 System.out.println("Escreva o nome do produto: ");
-                produto.setProd_nome(teclado.nextLine());
+                produto.setProd_nome(lerOpcaoString());
 
                 System.out.println("Escreva o id do produto: ");
-                produto.setProd_id(Integer.parseInt(teclado.nextLine()));
+                produto.setProd_id(Integer.parseInt(lerOpcaoString()));
 
                 ProdutosUseCase.attProdutos(produto, opcao);
             } else if (opcao == 2) {
                 ProdutosUseCase.listarProdutos();
-                teclado.nextLine();
 
                 System.out.println("-Atualização de estoque por NOME e ID do produto-");
                 System.out.println("Escreva a quantia do NOVO estoque para o produto a ser alterado: ");
-                produto.setProd_estoque(Integer.parseInt(teclado.next()));
-                teclado.nextLine();
+                produto.setProd_estoque(lerOpcao());
 
                 System.out.println("Escreva o nome do produto: ");
-                produto.setProd_nome(teclado.nextLine());
+                produto.setProd_nome(lerOpcaoString());
 
                 System.out.println("Escreva o id do produto: ");
-                produto.setProd_id(Integer.parseInt(teclado.nextLine()));
+                produto.setProd_id(Integer.parseInt(lerOpcaoString()));
 
                 ProdutosUseCase.attProdutos(produto, opcao);
             } else if (opcao == 3) {
                 ProdutosUseCase.listarProdutos();
-                teclado.nextLine();
 
                 System.out.println("-Atualização de preço por NOME e ID do produto-");
                 System.out.println("Escreva o NOVO preço para o produto a ser alterado (com ponto ao invés de vírgula): ");
-                produto.setProd_preco(Double.parseDouble(teclado.nextLine()));
+                produto.setProd_preco(Double.parseDouble(lerOpcaoString()));
                 System.out.println("Escreva o nome do produto: ");
-                produto.setProd_nome(teclado.nextLine());
+                produto.setProd_nome(lerOpcaoString());
                 System.out.println("Escreva o id do produto: ");
-                produto.setProd_id(Integer.parseInt(teclado.nextLine()));
+                produto.setProd_id(Integer.parseInt(lerOpcaoString()));
 
                 ProdutosUseCase.attProdutos(produto, opcao);
             }
@@ -143,7 +158,6 @@ public class ProdutosController {
         do {
             ProdutosUseCase.listarProdutos();
 
-
             System.out.println("""
                     Opções:
                     1- Desativar produto.
@@ -151,7 +165,7 @@ public class ProdutosController {
                     0- Cancelar operação.
                     """);
             System.out.println("O que você deseja fazer? (1-2 ou 0 para sair): ");
-            opcao = teclado.nextInt();
+            opcao = lerOpcao();
 
             if (opcao == 0) {
                 ProdutosUseCase.deleProdutos(opcao, 0);
@@ -159,12 +173,12 @@ public class ProdutosController {
                 ProdutosUseCase.deleProdutos(opcao, 0);
             } else if (opcao == 1) {
                 System.out.println("Digite o ID do produto que deseja desativar: ");
-                id = teclado.nextInt();
+                id = lerOpcao();
 
                 ProdutosUseCase.deleProdutos(opcao, id);
             } else if (opcao == 2) {
                 System.out.println("Digite o ID do produto que deseja deletar do banco de dados: ");
-                id = teclado.nextInt();
+                id = lerOpcao();
 
                 ProdutosUseCase.deleProdutos(opcao, id);
             }

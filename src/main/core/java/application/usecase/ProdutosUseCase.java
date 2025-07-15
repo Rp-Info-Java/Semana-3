@@ -5,8 +5,6 @@ import application.service.ServiceBase;
 import domain.model.entity.Produtos;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.util.List;
 
 public class ProdutosUseCase extends ProdutosService{
     public ProdutosUseCase(Connection connection) {

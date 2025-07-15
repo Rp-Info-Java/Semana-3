@@ -5,10 +5,7 @@ import domain.repositories.produtos.ProdutosDAO;
 import domain.repositories.produtos.ProdutosDAOImpl;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProdutosService extends ServiceBase {

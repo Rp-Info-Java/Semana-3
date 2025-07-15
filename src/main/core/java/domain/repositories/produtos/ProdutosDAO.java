@@ -15,9 +15,7 @@ public interface ProdutosDAO{
     Produtos getProduto(Integer prod_id) throws SQLException;
 
     List<Produtos> getProdNamePrice() throws SQLException;
-
     List<Produtos> getAllProd()throws SQLException;
-
     List<Produtos> getProdLimp()throws SQLException;
     List<Produtos> getProdEstoque()throws SQLException;
     List<Produtos> getProdPriceRange()throws SQLException;

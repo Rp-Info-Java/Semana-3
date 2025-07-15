@@ -12,21 +12,6 @@ public class Produtos {
         super();
     }
 
-    public Produtos(int prod_id, String prod_nome, String prod_status){
-        this.prod_id = prod_id;
-        this.prod_nome = prod_nome;
-        this.prod_status = prod_status;
-    }
-
-    public Produtos(int prod_id, String prod_nome, double prod_preco, String prod_categoria, int prod_estoque, String prod_status) {
-        this.prod_id = prod_id;
-        this.prod_nome = prod_nome;
-        this.prod_preco = prod_preco;
-        this.prod_categoria = prod_categoria;
-        this.prod_estoque = prod_estoque;
-        this.prod_status = prod_status;
-    }
-
     public String getProd_nome() {
         return prod_nome;
     }
