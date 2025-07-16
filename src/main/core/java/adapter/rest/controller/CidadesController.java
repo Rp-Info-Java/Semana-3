@@ -35,14 +35,22 @@ public class CidadesController {
 
     public void addCidade(){
         Cidades cidade = new Cidades();
+        String leituraUF = "";
+
         System.out.println("\n--Adicionando uma cidade ao banco de dados--");
         System.out.println("Digite o nome da cidade: ");
         cidade.setCida_nome(lerOpcaoString());
         System.out.println("Digite a Unidade Federativa(UF) da cidade: ");
-        cidade.setCida_uf(lerOpcaoString());
-        cidade.setCida_status("S");
+        leituraUF = lerOpcaoString();
 
-        CidadesUseCase.inserirCidades(cidade);
+        if(leituraUF.length() == 2){
+            cidade.setCida_uf(leituraUF);
+            cidade.setCida_status("S");
+
+            CidadesUseCase.inserirCidades(cidade);
+        }else{
+            CidadesUseCase.charUF(leituraUF);
+        }
     }
 
     public void updateCidade(){
@@ -52,15 +60,16 @@ public class CidadesController {
                     Escolha uma das opções de atualização:
                     1- Atualizar nome da cidade.
                     2- Atualizar Unidade Federativa (UF) da cidade.
+                    3- Reativar uma cidade.
                     0- Cancelar atualização.
                     """);
-            System.out.println("Digite a opção de atualização desejada (1-2 ou 0 para sair): ");
+            System.out.println("Digite a opção de atualização desejada (1-3 ou 0 para sair): ");
             opcao = lerOpcao();
             Cidades cidade = new Cidades();
 
             if(opcao == 0){
                 CidadesUseCase.attCidades(cidade, opcao);
-            }else if(opcao < 0 || opcao > 2){
+            }else if(opcao < 0 || opcao > 3){
                 CidadesUseCase.attCidades(cidade, opcao);
             }else if(opcao == 1){
                 CidadesUseCase.listarCidades();
@@ -81,6 +90,16 @@ public class CidadesController {
                 cidade.setCida_uf(lerOpcaoString().toUpperCase());
 
                 System.out.println("Escreva o ID da cidade que irá ser alterada: ");
+                cidade.setCida_id(lerOpcao());
+
+                CidadesUseCase.attCidades(cidade, opcao);
+            }else if(opcao == 3){
+                CidadesUseCase.listarCidades();
+
+                System.out.println("\n-Reativação de uma cidade-");
+                System.out.println("Escreva o nome da cidade a ser reativada: ");
+                cidade.setCida_nome(lerOpcaoString());
+                System.out.println("Escreva o ID da cidade: ");
                 cidade.setCida_id(lerOpcao());
 
                 CidadesUseCase.attCidades(cidade, opcao);

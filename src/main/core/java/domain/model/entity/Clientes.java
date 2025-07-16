@@ -1,6 +1,7 @@
 package domain.model.entity;
 
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 public class Clientes {
@@ -9,7 +10,7 @@ public class Clientes {
     private String clie_email;
     private String clie_cpf;
     private String clie_telefone;
-    private Timestamp clie_data_cadastro;
+    private Date clie_data_cadastro;
     private int clie_ende_id;
     private String clie_status;
 
@@ -57,11 +58,11 @@ public class Clientes {
         this.clie_telefone = clie_telefone;
     }
 
-    public Timestamp getClie_data_cadastro() {
+    public Date getClie_data_cadastro() {
         return clie_data_cadastro;
     }
 
-    public void setClie_data_cadastro(Timestamp clie_data_cadastro) {
+    public void setClie_data_cadastro(Date clie_data_cadastro) {
         this.clie_data_cadastro = clie_data_cadastro;
     }
 

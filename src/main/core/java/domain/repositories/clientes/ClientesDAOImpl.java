@@ -1,6 +1,7 @@
 package domain.repositories.clientes;
 
 import domain.model.entity.Clientes;
+import domain.model.entity.Produtos;
 import domain.repositories.DAOImpl;
 import shared.FunctionsAux;
 
@@ -22,7 +23,7 @@ public class ClientesDAOImpl extends DAOImpl implements ClientesDAO {
             stmt.setString(3, cliente.getClie_email());
             stmt.setString(4, cliente.getClie_cpf());
             stmt.setString(5, cliente.getClie_telefone());
-            stmt.setTimestamp(6, cliente.getClie_data_cadastro());
+            stmt.setDate(6, cliente.getClie_data_cadastro());
             stmt.setInt(7, cliente.getClie_ende_id());
             stmt.setString(8, "S");
             stmt.executeUpdate();
@@ -43,6 +44,8 @@ public class ClientesDAOImpl extends DAOImpl implements ClientesDAO {
                 return auxUpdateTelef(cliente);
             case 3:
                 return auxUpdateEnde(cliente);
+            case 4:
+                return auxUpdateStatus(cliente);
             default:
                 System.out.println("Opção inválida selecionada!");
         }
@@ -83,6 +86,20 @@ public class ClientesDAOImpl extends DAOImpl implements ClientesDAO {
         try (PreparedStatement stmt = this.getConnection().prepareStatement(sql)){
             stmt.setInt(1, cliente.getClie_ende_id());
             stmt.setInt(2, cliente.getClie_id());
+            if(stmt.executeUpdate() > 0){
+                return true;
+            }
+        }catch (SQLException e){
+            System.out.println("Erro ao executar a consulta: " + e.getMessage());
+        }
+        return false;
+    }
+    public boolean auxUpdateStatus(Clientes cliente){
+        String sql = "UPDATE clientes SET clie_status = ? WHERE lower(clie_nome) = ? AND clie_id = ?";
+        try(PreparedStatement stmt = this.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, "S");
+            stmt.setString(2, cliente.getClie_nome());
+            stmt.setInt(3, cliente.getClie_id());
             if(stmt.executeUpdate() > 0){
                 return true;
             }
@@ -176,7 +193,7 @@ public class ClientesDAOImpl extends DAOImpl implements ClientesDAO {
         cliente.setClie_email(clie_email);
         cliente.setClie_cpf(clie_cpf);
         cliente.setClie_telefone(clie_telefone);
-        cliente.setClie_data_cadastro(rs.getTimestamp("clie_data_cadastro"));
+        cliente.setClie_data_cadastro(rs.getDate("clie_data_cadastro"));
         cliente.setClie_ende_id(rs.getInt("clie_ende_id"));
         cliente.setClie_status(clie_status);
 

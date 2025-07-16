@@ -94,6 +94,12 @@ public class EnderecosService extends ServiceBase {
         }
     }
 
+    public void cepTamanho (String cep){
+        if(cep.length() != 8){
+            System.out.println("O CEP inserido não é válido por não possuir 8 caracteres. Digite corretamente!\n");
+        }
+    }
+
     public void adicionarEnderecos(Enderecos endereco) throws SQLException {
         List<Enderecos> enderecosList = this.dao.getAllEnde();
         int cepIgual = 0;
@@ -114,9 +120,10 @@ public class EnderecosService extends ServiceBase {
     }
 
     public void atualizarEnderecos(Enderecos endereco, int opcao) throws SQLException {
+        Enderecos end = this.dao.getEndereco(endereco.getEnde_id());
         if (opcao == 0) {
             System.out.println("Cancelando a atualização!\n");
-        } else if (opcao < 0 || opcao > 4) {
+        } else if (opcao < 0 || opcao > 5) {
             System.out.println("A opção digitada é inválida. Digite uma opção válida!");
         } else if (opcao == 1) {
             if (this.dao.update(endereco, opcao)) {
@@ -141,6 +148,16 @@ public class EnderecosService extends ServiceBase {
                 System.out.println("Endereço atualizado com sucesso!\n");
             } else {
                 System.out.println("Endereço não encontrado");
+            }
+        } else if (opcao == 5){
+            if(end != null && end.getEnde_status().equals("S")){
+                System.out.println("O endereço informado já está ativo!\n");
+            }else{
+                if (this.dao.update(endereco, opcao)) {
+                    System.out.println("Endereço reativado com sucesso!\n");
+                } else {
+                    System.out.println("Endereço não encontrado!\n");
+                }
             }
         }
     }

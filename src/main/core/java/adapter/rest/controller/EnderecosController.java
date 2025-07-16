@@ -35,29 +35,38 @@ public class EnderecosController {
         EnderecosUseCase.listarEnderecos();
     }
 
-    public void addEndereco(){
+    public void addEndereco() throws SQLException {
         Enderecos endereco = new Enderecos();
         int leitura;
+        String leituraCEP = "";
         CidadesUseCase.listarCidades();
 
         System.out.println("\n-Adicionando um endereço ao banco de dados-");
         System.out.println("Digite o ID da cidade que terá um novo endereço adicionado: ");
         leitura = lerOpcao();
         if(EnderecosUseCase.controleCidaID(leitura)){
-            endereco.setEnde_cida_id(leitura);
-            System.out.println("Digite o nome da rua do endereço: ");
-            endereco.setEnde_rua(lerOpcaoString());
-            System.out.println("Digite o número do endereço: ");
-            endereco.setEnde_numero(lerOpcao());
-            System.out.println("Digite o complemento do endereço: ");
-            endereco.setEnde_complemento(lerOpcaoString());
-            System.out.println("Digite o bairro do endereço: ");
-            endereco.setEnde_bairro(lerOpcaoString());
+            EnderecosUseCase.listarEnderecos();
             System.out.println("Digite o CEP do endereço (CEPs não podem se repitir no banco): ");
-            endereco.setEnde_cep(lerOpcaoString());
-            endereco.setEnde_status("S");
+            leituraCEP = lerOpcaoString();
 
-            EnderecosUseCase.inserirEnderecos(endereco);
+            if(leituraCEP.length() == 8){
+                endereco.setEnde_cep(leituraCEP);
+
+                endereco.setEnde_cida_id(leitura);
+                System.out.println("Digite o nome da rua do endereço: ");
+                endereco.setEnde_rua(lerOpcaoString());
+                System.out.println("Digite o número do endereço: ");
+                endereco.setEnde_numero(lerOpcao());
+                System.out.println("Digite o complemento do endereço: ");
+                endereco.setEnde_complemento(lerOpcaoString());
+                System.out.println("Digite o bairro do endereço: ");
+                endereco.setEnde_bairro(lerOpcaoString());
+
+                endereco.setEnde_status("S");
+                EnderecosUseCase.inserirEnderecos(endereco);
+            }else{
+                EnderecosUseCase.tamanhoCEP(leituraCEP);
+            }
         }
     }
 
@@ -70,15 +79,16 @@ public class EnderecosController {
                     2- Atualizar número do endereço.
                     3- Atualizar complemento do endereço.
                     4- Atualizar bairro do endereço.
+                    5- Reativar um endereço.
                     0- Cancelar atualização.
                     """);
-            System.out.println("Digite a opção de atualização desejada (1-4 ou 0 para sair): ");
+            System.out.println("Digite a opção de atualização desejada (1-5 ou 0 para sair): ");
             opcao = lerOpcao();
             Enderecos endereco = new Enderecos();
 
             if (opcao == 0) {
                 EnderecosUseCase.attEnderecos(endereco, opcao); //mensagem para sair do menu
-            } else if (opcao < 0 || opcao > 4) {
+            } else if (opcao < 0 || opcao > 5) {
                 EnderecosUseCase.attEnderecos(endereco, opcao);
             } else if (opcao == 1) {
                 EnderecosUseCase.listarEnderecos();
@@ -119,6 +129,14 @@ public class EnderecosController {
                 System.out.println("Escreva o nome do NOVO bairro para o endereço a ser alterado: ");
                 endereco.setEnde_bairro(lerOpcaoString());
                 System.out.println("Escreva o ID do endereço: ");
+                endereco.setEnde_id(lerOpcao());
+
+                EnderecosUseCase.attEnderecos(endereco, opcao);
+            } else if (opcao == 5){
+                EnderecosUseCase.listarEnderecos();
+
+                System.out.println("-Reativação de Endereço por ID-");
+                System.out.println("Escreva o ID do endereço a ser reativado: ");
                 endereco.setEnde_id(lerOpcao());
 
                 EnderecosUseCase.attEnderecos(endereco, opcao);

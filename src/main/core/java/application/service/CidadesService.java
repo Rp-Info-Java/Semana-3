@@ -16,6 +16,12 @@ public class CidadesService extends ServiceBase{
         this.dao = new CidadesDAOImpl(connection);
     }
 
+    public void controleCharUF(String uf){
+        if(uf.length() != 2){
+            System.out.println("A UF digitada é inválida. A UF deve possuir 2 caracteres!\n");
+        }
+    }
+
     public void adicionarCidades(Cidades cidade) throws SQLException{
         List<Cidades> cidadesList = this.dao.getAllCida();
         int cidadeIgual = 0;
@@ -36,9 +42,10 @@ public class CidadesService extends ServiceBase{
     }
 
     public void atualizarCidades(Cidades cidade, int opcao) throws SQLException{
+        Cidades cid = this.dao.getCidade(cidade.getCida_id());
         if (opcao == 0){
             System.out.println("Cancelando a atualização!\n");
-        }else if (opcao < 0 || opcao > 2){
+        }else if (opcao < 0 || opcao > 3){
             System.out.println("A opção digitada é inválida. Digite uma opção válida!");
         }else if (opcao == 1){
             if (this.dao.update(cidade, opcao)){
@@ -51,6 +58,16 @@ public class CidadesService extends ServiceBase{
                 System.out.println("Cidade atualizada com sucesso!\n");
             }else{
                 System.out.println("Cidade não encontrada!\n");
+            }
+        }else if(opcao == 3){
+            if(cid != null && cid.getCida_status().equals("S") && cid.getCida_nome().equals(cidade.getCida_nome())){
+                System.out.println("A cidade informada já está ativa!\n");
+            }else{
+                if(this.dao.update(cidade, opcao)){
+                    System.out.println("Cidade atualizada com sucesso!\n");
+                }else{
+                    System.out.println("Cidade não encontrada!\n");
+                }
             }
         }
     }

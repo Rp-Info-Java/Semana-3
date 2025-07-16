@@ -33,14 +33,16 @@ public class ProdutosDAOImpl extends DAOImpl implements ProdutosDAO{
 
     @Override
     public boolean update(Produtos produto, int opcao) throws SQLException{
-        int linhasAfetadas = 0;
+
         switch(opcao){
             case 1:
-                return auxUpdateCategoria(produto, linhasAfetadas);
+                return auxUpdateCategoria(produto);
             case 2:
-                return auxUpdateEstoque(produto, linhasAfetadas);
+                return auxUpdateEstoque(produto);
             case 3:
-                return auxUpdatePreco(produto, linhasAfetadas);
+                return auxUpdatePreco(produto);
+            case 4:
+                return auxUpdateStatus(produto);
             default:
                 System.out.println("Opção inválida selecionada!");
                 return false;
@@ -49,12 +51,11 @@ public class ProdutosDAOImpl extends DAOImpl implements ProdutosDAO{
 
     @Override
     public boolean delete(Produtos produto, int opcao) throws SQLException{
-        int linhasAfetadas = 0;
         switch(opcao){
             case 1:
-                return auxDesativarProd(produto, linhasAfetadas);
+                return auxDesativarProd(produto);
             case 2:
-                return auxRemoverProd(produto, linhasAfetadas);
+                return auxRemoverProd(produto);
             default:
                 System.out.println("Opção inválida selecionada!");
                 return false;
@@ -121,7 +122,7 @@ public class ProdutosDAOImpl extends DAOImpl implements ProdutosDAO{
 
     @Override
     public List<Produtos> getProdNamePrice() throws SQLException{
-        String query2 = "SELECT prod_nome, prod_preco FROM produtos";
+        String query2 = "SELECT lower(prod_nome), prod_preco FROM produtos";
         List<Produtos> prods = new ArrayList<>();
 
         try (Statement stmt = this.getConnection().createStatement();
@@ -202,7 +203,7 @@ public class ProdutosDAOImpl extends DAOImpl implements ProdutosDAO{
     }
     @Override
     public List<Produtos> getProdGamer() throws SQLException{
-        String query6 = "SELECT * FROM produtos WHERE prod_nome ILIKE '%Gamer%' ";
+        String query6 = "SELECT * FROM produtos WHERE lower(prod_nome) ILIKE '%Gamer%' ";
         List<Produtos> prods = new ArrayList<>();
 
         try (Statement stmt = this.getConnection().createStatement();
@@ -281,15 +282,17 @@ public class ProdutosDAOImpl extends DAOImpl implements ProdutosDAO{
 
 
     /* -------------------UPDATE--------------------------------*/
-    public boolean auxUpdateCategoria(Produtos produto, int linhasAfetadas){
-        String sql = "UPDATE produtos SET prod_categoria = ? WHERE prod_nome = ? AND prod_id = ?";
+    public boolean auxUpdateCategoria(Produtos produto){
+        String sql = "UPDATE produtos SET prod_categoria = ? WHERE lower(prod_nome) = ? AND prod_id = ?";
 
         try (PreparedStatement stmt = this.getConnection().prepareStatement(sql)) {
             stmt.setString(1, produto.getProd_categoria());
             stmt.setString(2, produto.getProd_nome());
             stmt.setInt(3, produto.getProd_id());
-            linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+             if(stmt.executeUpdate() > 0){
+                 return true;
+             }
+
         }
         catch (SQLException e) {
             System.out.println("Erro ao executar a consulta: " + e.getMessage());
@@ -297,15 +300,17 @@ public class ProdutosDAOImpl extends DAOImpl implements ProdutosDAO{
         return false;
     }
 
-    public boolean auxUpdateEstoque(Produtos produto, int linhasAfetadas){
-        String sql = "UPDATE produtos SET prod_estoque = ? WHERE prod_nome = ? AND prod_id = ?";
+    public boolean auxUpdateEstoque(Produtos produto){
+        String sql = "UPDATE produtos SET prod_estoque = ? WHERE lower(prod_nome) = ? AND prod_id = ?";
 
         try (PreparedStatement stmt = this.getConnection().prepareStatement(sql)) {
             stmt.setInt(1, produto.getProd_estoque());
             stmt.setString(2, produto.getProd_nome());
             stmt.setInt(3, produto.getProd_id());
-            linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+             if(stmt.executeUpdate() > 0){
+                 return true;
+             }
+
         }
         catch (SQLException e) {
             System.out.println("Erro ao executar a consulta: " + e.getMessage());
@@ -313,17 +318,34 @@ public class ProdutosDAOImpl extends DAOImpl implements ProdutosDAO{
         return false;
     }
 
-    public boolean auxUpdatePreco(Produtos produto, int linhasAfetadas){
-        String sql = "UPDATE produtos SET prod_preco = ? WHERE prod_nome = ? AND prod_id = ?";
+    public boolean auxUpdatePreco(Produtos produto){
+        String sql = "UPDATE produtos SET prod_preco = ? WHERE lower(prod_nome) = ? AND prod_id = ?";
 
         try (PreparedStatement stmt = this.getConnection().prepareStatement(sql)) {
             stmt.setDouble(1, produto.getProd_preco());
             stmt.setString(2, produto.getProd_nome());
             stmt.setInt(3, produto.getProd_id());
-            linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+             if(stmt.executeUpdate() > 0){
+                 return true;
+             }
+
         }
         catch (SQLException e) {
+            System.out.println("Erro ao executar a consulta: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean auxUpdateStatus(Produtos produto){
+        String sql = "UPDATE produtos SET prod_status = ? WHERE lower(prod_nome) = ? AND prod_id = ?";
+        try(PreparedStatement stmt = this.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, "S");
+            stmt.setString(2, produto.getProd_nome());
+            stmt.setInt(3, produto.getProd_id());
+            if(stmt.executeUpdate() > 0){
+                return true;
+            }
+        }catch (SQLException e){
             System.out.println("Erro ao executar a consulta: " + e.getMessage());
         }
         return false;
@@ -331,14 +353,16 @@ public class ProdutosDAOImpl extends DAOImpl implements ProdutosDAO{
     /* -------------------UPDATE--------------------------------*/
 
     /*--------------------DELETE---------------------------------*/
-    public boolean auxDesativarProd(Produtos produto, int linhasAfetadas){
+    public boolean auxDesativarProd(Produtos produto){
         String sqlDesativar = "UPDATE produtos SET prod_status = ? WHERE prod_id = ?";
 
         try (PreparedStatement stmt = this.getConnection().prepareStatement(sqlDesativar)) {
             stmt.setString(1, produto.getProd_status());
             stmt.setInt(2, produto.getProd_id());
-            linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+             if(stmt.executeUpdate() > 0){
+                 return true;
+             }
+
         }
         catch (SQLException e) {
             System.out.println("Erro ao executar a consulta: " + e.getMessage());
@@ -346,13 +370,15 @@ public class ProdutosDAOImpl extends DAOImpl implements ProdutosDAO{
         return false;
     }
 
-    public boolean auxRemoverProd(Produtos produto, int linhasAfetadas){
+    public boolean auxRemoverProd(Produtos produto ){
         String sqlDeletar = "DELETE FROM produtos WHERE prod_id = ?";
 
         try (PreparedStatement stmt = this.getConnection().prepareStatement(sqlDeletar)) {
             stmt.setInt(1, produto.getProd_id());
-            linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+             if(stmt.executeUpdate() > 0){
+                 return true;
+             }
+
         }
         catch (SQLException e) {
             System.out.println("Erro ao executar a consulta: " + e.getMessage());

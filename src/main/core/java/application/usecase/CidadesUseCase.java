@@ -12,6 +12,19 @@ public class CidadesUseCase extends CidadesService {
         super(connection);
     }
 
+    public static void charUF(String uf){
+        Connection connection;
+        CidadesService service;
+        try{
+            connection = ServiceBase.connectionManager();
+            service = new CidadesService(connection);
+            service.controleCharUF(uf);
+            connection.close();
+        } catch(Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void inserirCidades(Cidades cidade){
         Connection connection;
         CidadesService service;

@@ -80,6 +80,19 @@ public class ClientesUseCase extends ClientesService {
             connection.close();
         }
     }
+    public static void charCPF(String cpf) throws SQLException {
+        Connection connection = null;
+        ClientesService service;
+        try{
+            connection = ServiceBase.connectionManager();
+            service = new ClientesService(connection);
+            service.cpfChar(cpf);
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }finally{
+            connection.close();
+        }
+    }
 
     public static void listarClientes(){
         Connection connection;

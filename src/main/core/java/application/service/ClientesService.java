@@ -5,7 +5,10 @@ import domain.repositories.clientes.ClientesDAO;
 import domain.repositories.clientes.ClientesDAOImpl;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class ClientesService extends ServiceBase{
@@ -22,9 +25,10 @@ public class ClientesService extends ServiceBase{
     }
 
     public void atualizarClientes(Clientes cliente, int opcao) throws SQLException{
+        Clientes clie = this.dao.getCliente(cliente.getClie_id());
         if(opcao == 0){
             System.out.println("Cancelando a atualização!\n");
-        }else if (opcao < 0 || opcao > 3){
+        }else if (opcao < 0 || opcao > 4){
             System.out.println("A opção digitada é inválida. Digite uma opção válida!");
         }else if (opcao == 1){
             if(this.dao.update(cliente, opcao)){
@@ -43,6 +47,16 @@ public class ClientesService extends ServiceBase{
                 System.out.println("Cliente atualizado com sucesso!\n");
             }else{
                 System.out.println("Cliente não encontrado!\n");
+            }
+        }else if (opcao == 4){
+            if(clie != null && clie.getClie_status().equals("S") && clie.getClie_nome().equals(cliente.getClie_nome())){
+                System.out.println("O cliente informado já está ativo!\n");
+            }else{
+                if(this.dao.update(cliente, opcao)){
+                    System.out.println("Cliente atualizado com sucesso!\n");
+                }else{
+                    System.out.println("Cliente não encontrado!\n");
+                }
             }
         }
     }
@@ -104,7 +118,7 @@ public class ClientesService extends ServiceBase{
                 .append("┤\n");
 
         System.out.print(sb.toString());
-
+        SimpleDateFormat dateFmt = new SimpleDateFormat("dd/MM/yyyy");
         for(Clientes cli : clie){
             System.out.printf("│ %-5d │ %-20s │ %-25s │ %-14s │ %-14s │ %-24s │ %-12d │ %-8s │%n",
                     cli.getClie_id(),
@@ -112,7 +126,7 @@ public class ClientesService extends ServiceBase{
                     cli.getClie_email(),
                     cli.getClie_cpf(),
                     cli.getClie_telefone(),
-                    cli.getClie_data_cadastro(),
+                    dateFmt.format(cli.getClie_data_cadastro()),
                     cli.getClie_ende_id(),
                     cli.getClie_status());
         }
@@ -144,9 +158,15 @@ public class ClientesService extends ServiceBase{
     public boolean getCPF(String cpf) throws SQLException{
         if(this.dao.getClienteCPF(cpf)){
             System.out.println("O CPF inserido já existe no banco de dados!\n");
-            return true;
-        }else{
             return false;
+        }else{
+            return true;
+        }
+    }
+
+    public void cpfChar (String cpf){
+        if(cpf.length() != 11){
+            System.out.println("O CPF inserido não é valido, pois não possui 11 caracteres. Digite corretamente!\n");
         }
     }
 }

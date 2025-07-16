@@ -37,70 +37,92 @@ public class EnderecosDAOImpl extends DAOImpl implements EnderecosDAO {
     /*--------------------UPDATES ----------------------------------*/
     @Override
     public boolean update(Enderecos endereco, int opcao) throws SQLException {
-        int linhasAfetadas = 0;
         switch(opcao){
             case 1:
-                return auxUpdateRua(endereco, linhasAfetadas);
+                return auxUpdateRua(endereco);
             case 2:
-                return auxUpdateNumero(endereco, linhasAfetadas);
+                return auxUpdateNumero(endereco);
             case 3:
-                return auxUpdateComple(endereco, linhasAfetadas);
+                return auxUpdateComple(endereco);
             case 4:
-                return auxUpdateBairro(endereco, linhasAfetadas);
+                return auxUpdateBairro(endereco);
+            case 5:
+                return auxUpdateStatus(endereco);
             default:
                 System.out.println("Opção inválida selecionada");
         }
         return false;
     }
 
-    public boolean auxUpdateRua(Enderecos endereco, int linhasAfetadas){
+    public boolean auxUpdateRua(Enderecos endereco){
         String sql = "UPDATE enderecos SET ende_rua = ? WHERE ende_id = ?";
 
         try (PreparedStatement stmt = this.getConnection().prepareStatement(sql)) {
             stmt.setString(1, endereco.getEnde_rua());
             stmt.setInt(2, endereco.getEnde_id());
-            linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+             if(stmt.executeUpdate() > 0){
+                 return true;
+             }
         } catch (SQLException e) {
             System.out.println("Erro ao executar a consulta: " + e.getMessage());
         }
         return false;
     }
-    public boolean auxUpdateNumero(Enderecos endereco, int linhasAfetadas){
+    public boolean auxUpdateNumero(Enderecos endereco){
         String sql = "UPDATE enderecos SET ende_numero = ? WHERE ende_id = ?";
 
         try (PreparedStatement stmt = this.getConnection().prepareStatement(sql)) {
             stmt.setInt(1, endereco.getEnde_numero());
             stmt.setInt(2, endereco.getEnde_id());
-            linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+             if(stmt.executeUpdate() > 0){
+                 return true;
+             }
+
         } catch (SQLException e) {
             System.out.println("Erro ao executar a consulta: " + e.getMessage());
         }
         return false;
     }
-    public boolean auxUpdateComple(Enderecos endereco, int linhasAfetadas){
+    public boolean auxUpdateComple(Enderecos endereco){
         String sql = "UPDATE enderecos SET ende_complemento = ? WHERE ende_id = ?";
 
         try (PreparedStatement stmt = this.getConnection().prepareStatement(sql)) {
             stmt.setString(1, endereco.getEnde_complemento());
             stmt.setInt(2, endereco.getEnde_id());
-            linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+             if(stmt.executeUpdate() > 0){
+                 return true;
+             }
+
         } catch (SQLException e) {
             System.out.println("Erro ao executar a consulta: " + e.getMessage());
         }
         return false;
     }
-    public boolean auxUpdateBairro(Enderecos endereco, int linhasAfetadas){
+    public boolean auxUpdateBairro(Enderecos endereco){
         String sql = "UPDATE enderecos SET ende_bairro = ? WHERE ende_id = ?";
 
         try (PreparedStatement stmt = this.getConnection().prepareStatement(sql)) {
             stmt.setString(1, endereco.getEnde_bairro());
             stmt.setInt(2, endereco.getEnde_id());
-            linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+             if(stmt.executeUpdate() > 0){
+                 return true;
+             }
+
         } catch (SQLException e) {
+            System.out.println("Erro ao executar a consulta: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean auxUpdateStatus(Enderecos endereco){
+        String sql = "UPDATE enderecos SET ende_status = ? WHERE ende_id = ?";
+        try(PreparedStatement stmt = this.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, "S");
+            stmt.setInt(2, endereco.getEnde_id());
+            if(stmt.executeUpdate() > 0){
+                return true;
+            }
+        }catch (SQLException e){
             System.out.println("Erro ao executar a consulta: " + e.getMessage());
         }
         return false;
@@ -110,26 +132,27 @@ public class EnderecosDAOImpl extends DAOImpl implements EnderecosDAO {
     /*-------------------------DELETE------------------------------*/
     @Override
     public boolean delete(Enderecos endereco, int opcao) throws SQLException {
-        int linhasAfetadas = 0;
         switch (opcao) {
             case 1:
-                return auxDesativarEnde(endereco, linhasAfetadas);
+                return auxDesativarEnde(endereco);
             case 2:
-                return auxRemoverEnde(endereco, linhasAfetadas);
+                return auxRemoverEnde(endereco);
             default:
                 System.out.println("Opção inválida selecionada!");
                 return false;
         }
     }
 
-    public boolean auxDesativarEnde(Enderecos endereco, int linhasAfetadas){
+    public boolean auxDesativarEnde(Enderecos endereco){
         String sqlDesativar = "UPDATE enderecos SET ende_status = ? WHERE ende_id = ?";
 
         try (PreparedStatement stmt = this.getConnection().prepareStatement(sqlDesativar)) {
             stmt.setString(1, endereco.getEnde_status());
             stmt.setInt(2, endereco.getEnde_id());
-            linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+             if(stmt.executeUpdate() > 0){
+                 return true;
+             }
+
         }
         catch (SQLException e) {
             System.out.println("Erro ao executar a consulta: " + e.getMessage());
@@ -137,13 +160,15 @@ public class EnderecosDAOImpl extends DAOImpl implements EnderecosDAO {
         return false;
     }
 
-    public boolean auxRemoverEnde(Enderecos endereco, int linhasAfetadas){
+    public boolean auxRemoverEnde(Enderecos endereco){
         String sqlDeletar = "DELETE FROM enderecos WHERE ende_id = ?";
 
         try (PreparedStatement stmt = this.getConnection().prepareStatement(sqlDeletar)) {
             stmt.setInt(1, endereco.getEnde_id());
-            linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+             if(stmt.executeUpdate() > 0){
+                 return true;
+             }
+
         }
         catch (SQLException e) {
             System.out.println("Erro ao executar a consulta: " + e.getMessage());

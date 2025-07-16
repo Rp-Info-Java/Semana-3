@@ -22,9 +22,10 @@ public class ProdutosService extends ServiceBase {
     }
 
     public void atualizarProdutos(Produtos produto, int opcao) throws SQLException {
+        Produtos prod = this.dao.getProduto(produto.getProd_id());
         if (opcao == 0) {
             System.out.println("Cancelando atualização!\n");
-        } else if (opcao < 0 || opcao > 3) {
+        } else if (opcao < 0 || opcao > 4) {
             System.out.println("A opção digitada é inválida. Digite uma opção válida!");
         } else if (opcao == 1) {
             if (this.dao.update(produto, opcao)) {
@@ -43,6 +44,16 @@ public class ProdutosService extends ServiceBase {
                 System.out.println("Produto atualizado com sucesso!\n");
             } else {
                 System.out.println("Produto não encontrado!\n");
+            }
+        } else if (opcao == 4) {
+            if(prod != null && prod.getProd_status().equals("S") && prod.getProd_nome().equals(produto.getProd_nome())){
+                System.out.println("O produto informado já está ativo!\n");
+            }else{
+                if (this.dao.update(produto, opcao)) {
+                    System.out.println("Produto reativado com sucesso!\n");
+                } else {
+                    System.out.println("Produto não encontrado!\n");
+                }
             }
         }
     }
@@ -70,8 +81,10 @@ public class ProdutosService extends ServiceBase {
         } else if (opcao == 2) {
             if (produ != null) {
                 if (produ.getProd_status().equals("N")) {
-                    if (this.dao.delete(produ, opcao)) {
+                    if (produ.getProd_estoque() == 0 && this.dao.delete(produ, opcao)) {
                         System.out.println("Produto deletado com sucesso!");
+                    } else {
+                        System.out.println("O produto ainda possui estoque disponível.");
                     }
                 } else {
                     System.out.println("O produto fornecido deve ser desativado primeiro!");

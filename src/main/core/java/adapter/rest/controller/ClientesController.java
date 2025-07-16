@@ -4,8 +4,10 @@ import application.usecase.ClientesUseCase;
 import application.usecase.EnderecosUseCase;
 import domain.model.entity.Clientes;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -38,7 +40,7 @@ public class ClientesController {
 
     public void addCliente() throws SQLException {
         Clientes cliente = new Clientes();
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        LocalDate hoje = LocalDate.now();
         int leitura;
         String leituraCPF = "";
 
@@ -47,7 +49,7 @@ public class ClientesController {
         System.out.println("--Adicionando cliente ao banco de dados--");
         System.out.println("Digite o CPF do cliente: ");
         leituraCPF = lerOpcaoString();
-        if(!ClientesUseCase.controleCPF(leituraCPF)){
+        if(leituraCPF.length() == 11 && ClientesUseCase.controleCPF(leituraCPF)){
             cliente.setClie_cpf(leituraCPF);
 
             EnderecosUseCase.listarEnderecos();
@@ -63,10 +65,14 @@ public class ClientesController {
                 System.out.println("Digite o telefone do cliente (apenas números): ");
                 cliente.setClie_telefone(lerOpcaoString());
                 System.out.println("Inserindo a data atual do cadastro do cliente...");
-                cliente.setClie_data_cadastro(timestamp);
+                cliente.setClie_data_cadastro(Date.valueOf(hoje));
                 System.out.println("Inserindo cliente no banco de dados...");
 
                 ClientesUseCase.inserirClientes(cliente);
+            }
+        }else{
+            if(leituraCPF.length() != 11){
+                ClientesUseCase.charCPF(leituraCPF);
             }
         }
     }
@@ -80,15 +86,16 @@ public class ClientesController {
                     1- Atualizar e-mail do cliente.
                     2- Atualizar número de telefone do cliente.
                     3- Atualizar o endereço do cliente (pelo ID do endereço).
+                    4- Reativar um cliente.
                     0- Cancelar atualização.
                     """);
-            System.out.println("Digite a opção de atualização desejada(1-3 ou 0 para sair): ");
+            System.out.println("Digite a opção de atualização desejada(1-4 ou 0 para sair): ");
             opcao = lerOpcao();
             Clientes cliente = new Clientes();
 
             if(opcao == 0){
                 ClientesUseCase.attClientes(cliente, opcao);
-            }else if(opcao < 0 || opcao > 3){
+            }else if(opcao < 0 || opcao > 4){
                 ClientesUseCase.attClientes(cliente, opcao);
             }else if(opcao == 1){
                 ClientesUseCase.listarClientes();
@@ -128,6 +135,16 @@ public class ClientesController {
                     cliente.setClie_ende_id(leitura);
                     ClientesUseCase.attClientes(cliente, opcao);
                 }
+            }else if (opcao == 4){
+                ClientesUseCase.listarClientes();
+
+                System.out.println("-- Reativação de cliente --");
+                System.out.println("Escreva o nome do cliente: ");
+                cliente.setClie_nome(lerOpcaoString());
+                System.out.println("Escreva o ID do cliente: ");
+                cliente.setClie_id(lerOpcao());
+
+                ClientesUseCase.attClientes(cliente, opcao);
             }
         }while(opcao != 0);
     }

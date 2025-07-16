@@ -84,7 +84,7 @@ public class ProdutosController {
         System.out.println("Digite a categoria do produto: ");
         produto.setProd_categoria(lerOpcaoString());
         System.out.println("Digite o estoque do produto: ");
-        produto.setProd_estoque(Integer.parseInt(lerOpcaoString()));
+        produto.setProd_estoque(lerOpcao());
         System.out.println("Ativando status do novo produto...");
         produto.setProd_status("S");
 
@@ -99,15 +99,16 @@ public class ProdutosController {
                     1- Atualizar categoria do produto.
                     2- Atualizar estoque do produto.
                     3- Atualizar preço do produto.
+                    4- Reativar o produto.
                     0- Cancelar atualização.
                     """);
-            System.out.println("Digite a opção de atualização desejada (1-3 ou 0 para sair): ");
+            System.out.println("Digite a opção de atualização desejada (1-4 ou 0 para sair): ");
             opcao = lerOpcao();
             Produtos produto = new Produtos();
 
             if (opcao == 0) {
                 ProdutosUseCase.attProdutos(produto, opcao); //mensagem para sair do menu
-            } else if (opcao < 0 || opcao > 3) {
+            } else if (opcao < 0 || opcao > 4) {
                 ProdutosUseCase.attProdutos(produto, opcao);
             } else if (opcao == 1) {
                 ProdutosUseCase.listarProdutos();
@@ -119,8 +120,8 @@ public class ProdutosController {
                 System.out.println("Escreva o nome do produto: ");
                 produto.setProd_nome(lerOpcaoString());
 
-                System.out.println("Escreva o id do produto: ");
-                produto.setProd_id(Integer.parseInt(lerOpcaoString()));
+                System.out.println("Escreva o ID do produto: ");
+                produto.setProd_id(lerOpcao());
 
                 ProdutosUseCase.attProdutos(produto, opcao);
             } else if (opcao == 2) {
@@ -133,8 +134,8 @@ public class ProdutosController {
                 System.out.println("Escreva o nome do produto: ");
                 produto.setProd_nome(lerOpcaoString());
 
-                System.out.println("Escreva o id do produto: ");
-                produto.setProd_id(Integer.parseInt(lerOpcaoString()));
+                System.out.println("Escreva o ID do produto: ");
+                produto.setProd_id(lerOpcao());
 
                 ProdutosUseCase.attProdutos(produto, opcao);
             } else if (opcao == 3) {
@@ -145,8 +146,18 @@ public class ProdutosController {
                 produto.setProd_preco(Double.parseDouble(lerOpcaoString()));
                 System.out.println("Escreva o nome do produto: ");
                 produto.setProd_nome(lerOpcaoString());
-                System.out.println("Escreva o id do produto: ");
-                produto.setProd_id(Integer.parseInt(lerOpcaoString()));
+                System.out.println("Escreva o ID do produto: ");
+                produto.setProd_id(lerOpcao());
+
+                ProdutosUseCase.attProdutos(produto, opcao);
+            } else if (opcao == 4){
+                ProdutosUseCase.listarProdutos();
+
+                System.out.println("-Reativação de Produto-");
+                System.out.println("Escreva o nome do produto: ");
+                produto.setProd_nome(lerOpcaoString());
+                System.out.println("Escreva o ID do produto: ");
+                produto.setProd_id(lerOpcao());
 
                 ProdutosUseCase.attProdutos(produto, opcao);
             }

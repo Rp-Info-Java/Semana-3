@@ -1,6 +1,7 @@
 package domain.repositories.cidades;
 
 import domain.model.entity.Cidades;
+import domain.model.entity.Produtos;
 import domain.repositories.DAOImpl;
 import shared.FunctionsAux;
 
@@ -30,12 +31,13 @@ public class CidadesDAOImpl extends DAOImpl implements CidadesDAO {
 
     @Override
     public boolean update(Cidades cidade, int opcao){
-        int linhasAfetadas = 0;
         switch(opcao){
             case 1:
-                return auxUpdateNome(cidade, linhasAfetadas);
+                return auxUpdateNome(cidade);
             case 2:
-                return auxUpdateUF(cidade, linhasAfetadas);
+                return auxUpdateUF(cidade);
+            case 3:
+                return auxUpdateStatus(cidade);
             default:
                 System.out.println("Opção inválida selecionada!");
                 return false;
@@ -44,12 +46,11 @@ public class CidadesDAOImpl extends DAOImpl implements CidadesDAO {
 
     @Override
     public boolean delete(Cidades cidade, int opcao){
-        int linhasAfetadas = 0;
         switch (opcao){
             case 1:
-                return auxDesativarCida(cidade, linhasAfetadas);
+                return auxDesativarCida(cidade);
             case 2:
-                return auxRemoverCida(cidade, linhasAfetadas);
+                return auxRemoverCida(cidade);
             default:
                 System.out.println("Opção inválida selecionada!");
                 return false;
@@ -57,7 +58,7 @@ public class CidadesDAOImpl extends DAOImpl implements CidadesDAO {
     }
 
     @Override
-    public Cidades getCidade(Integer cida_id) throws SQLException{
+    public Cidades getCidade(Integer cida_id){
         Cidades cidade = null;
         String query = "SELECT * FROM cidades WHERE cida_id = " + cida_id;
 
@@ -109,56 +110,79 @@ public class CidadesDAOImpl extends DAOImpl implements CidadesDAO {
     }
 
     /*---------------------UPDATES-------------------*/
-    public boolean auxUpdateNome(Cidades cidade, int linhasAfetadas){
+    public boolean auxUpdateNome(Cidades cidade){
         String sql = "UPDATE cidades SET cida_nome = ? WHERE cida_id = ?";
 
         try(PreparedStatement stmt = this.getConnection().prepareStatement(sql)){
             stmt.setString(1, cidade.getCida_nome());
             stmt.setInt(2, cidade.getCida_id());
-            linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+             if(stmt.executeUpdate() > 0){
+                 return true;
+             }
+
         } catch (SQLException e) {
             System.out.println("Erro ao executar a consulta: " + e.getMessage());;
         }
         return false;
     }
 
-    public boolean auxUpdateUF(Cidades cidade, int linhasAfetadas){
+    public boolean auxUpdateUF(Cidades cidade){
         String sql = "UPDATE cidades SET cida_UF = ? WHERE cida_id = ?";
 
         try(PreparedStatement stmt = this.getConnection().prepareStatement(sql)){
             stmt.setString(1, cidade.getCida_uf().toUpperCase());
             stmt.setInt(2, cidade.getCida_id());
-            linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+             if(stmt.executeUpdate() > 0){
+                 return true;
+             }
+
         }catch(SQLException e){
             System.out.println("Erro ao executar a consulta:  " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean auxUpdateStatus(Cidades cidade){
+        String sql = "UPDATE cidades SET cida_status = ? WHERE lower(cida_nome) = ? AND cida_id = ?";
+        try(PreparedStatement stmt = this.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, "S");
+            stmt.setString(2, cidade.getCida_nome());
+            stmt.setInt(3, cidade.getCida_id());
+            if(stmt.executeUpdate() > 0){
+                return true;
+            }
+        }catch (SQLException e){
+            System.out.println("Erro ao executar a consulta: " + e.getMessage());
         }
         return false;
     }
     /*---------------------------------------------------*/
 
     /*-------------------DELETES------------------------------------*/
-    public boolean auxDesativarCida(Cidades cidade, int linhasAfetadas){
+    public boolean auxDesativarCida(Cidades cidade){
         String sqlDesativar = "UPDATE cidades SET cida_status = ? WHERE cida_id = ?";
 
         try(PreparedStatement stmt = this.getConnection().prepareStatement(sqlDesativar)){
             stmt.setString(1, cidade.getCida_status());
             stmt.setInt(2, cidade.getCida_id());
-            linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+             if(stmt.executeUpdate() > 0){
+                 return true;
+             }
+
         }catch (SQLException e){
             System.out.println("Erro ao executar a consulta: " + e.getMessage());
         }
         return false;
     }
-    public boolean auxRemoverCida(Cidades cidade, int linhasAfetadas){
+    public boolean auxRemoverCida(Cidades cidade){
         String sqlDeletar = "DELETE FROM cidades WHERE cida_id = ?";
 
         try(PreparedStatement stmt = this.getConnection().prepareStatement(sqlDeletar)){
             stmt.setInt(1, cidade.getCida_id());
-            linhasAfetadas = stmt.executeUpdate();
-            return linhasAfetadas > 0;
+             if(stmt.executeUpdate() > 0){
+                 return true;
+             }
+
         }catch (SQLException e){
             System.out.println("Erro ao executar a consulta: " + e.getMessage());
         }
